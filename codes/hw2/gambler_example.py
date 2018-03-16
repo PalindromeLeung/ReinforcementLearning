@@ -8,11 +8,15 @@ def get_P_and_R_gambler(prob_head):
     P = np.zeros([101,100,101])
     R = np.zeros([101,100,101])
     
-    """
-    
-    Your code
-    
-    """
+    for i in range(101):
+    	for j in range(50):
+    		if (i-j)>0 && (i+j)<= 100:
+    			P[i][j][i+j] = prob_head
+    			p[i][j][i-j] = 1 - prob_head
+
+    for i in range(101):
+    	R[:][:][100] = 1
+    	
     return P,R    
 
 # initial value function

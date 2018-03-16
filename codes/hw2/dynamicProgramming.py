@@ -14,9 +14,9 @@ def policyEval(policy, P, R, gamma, theta, max_iter=1e8):
         k = k + 1
         for i in range(num_S):
             temp_v = 0
-            for j, action_prb in enumerate(policy[i]):
-                for r in P[i][j]:
-                    temp_v += action_prb * P[i][j][r] * (r + gamma* v[i+1])
+            for j in range(num_a):
+                for r in range(num_S):
+                    temp_v += P[i][j][r] * (R[i][j][r] + gamma * v[i+1])
             delta = max(delta, np.abs(temp_v - v[i]))
             v[i] = _v
         if delta < theta:
@@ -33,13 +33,23 @@ def policyImprv(P,R,gamma,policy,v):
     num_S, num_a = policy.shape
     policy_new = np.zeros([num_S,num_a])
     policy_stable = True
-        
-    """
-    
-    Your code 
-    
-    """
-    
+
+    while True:
+        for s in range(num_S):
+            chosen_a = np.argmax(policy[s])
+
+            for i in range(num_S):
+                temp_v = 0
+                for j in range(num_a):
+                    for r in range(num_S):
+                        temp_v +=  P[i][j][r] * (R[i][j][r] + gamma* v[i+1])
+                v[i] = _v
+            best_a = np.argmax(v)
+
+            if chosen_a != best_a:
+                policy_stable = False
+            policy[s] = np.eye(env.nA)[best_a]
+
     return policy_new, policy_stable
 
 
@@ -69,19 +79,28 @@ def valueIteration(P,R,gamma,theta,initial_v,max_iter=1e8):
     It returns the best action for each state  under a deterministic policy, 
     and the corresponding state-value function.
     """
-    print('Running value iteration ...')    
-    
+    print('Running value iteration ...')   
+
     # initialization
     v = initial_v    
     num_states, num_actions = P.shape[:2]
     k = 0 
     best_actions = [0] * num_states
-    
-    """
-    
-    Your code
-    
-    """
-    
+    while (k < max_iter):
+        k = k+1
+        delta = 0 
+        for i in range(num_states):
+            for j in range(num_actions):
+                for r in range(num_states):
+                    v[i] += P[i][j][r]* (R[i][j][r] + gamma* initial_v[i+1] ) 
+
+            best_action_value = np.max(v[i])
+            delta = max(delta, np.abs(best_action_value - v[i]))
+            v[i] = best_action_value
+            best_action = np.argmax(v[i])
+            best_actions[i] = best_action
+        if delta < theta:
+            break
+
     print('number of iterations:', k)
     return best_actions, v
