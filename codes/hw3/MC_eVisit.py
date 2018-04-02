@@ -18,11 +18,16 @@ def MC_eVisit(get_episode,policy,initial_v,gamma,alpha,num_episodes=1):
    
     for ep in range(num_episodes):
         states,_,rewards = get_episode(policy) # generate an episode
-        
-        """
-        Your Code
+        G_total = 0
+        for state in states:
+            first_occr = next(i for i,x in enumerate(states) if states[i] == state )
+            G = sum([ x * (gamma ** i) for i,x in enumerate(rewards[first_occr:])])
+            G_total += G
+            N_s[state] += 1.0
 
-        """
-     
+            if alpha ==0:
+                v[state] +=( G_total - v[state])/N_s[state]
+
+            else:
+                v[state] += alpha *(G_total - v[state])
     return v
-
