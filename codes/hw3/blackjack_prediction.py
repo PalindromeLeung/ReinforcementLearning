@@ -4,8 +4,8 @@ from mpl_toolkits.mplot3d import Axes3D
 from MC_eVisit import *
 from blackjack_setup import *
 
-num_episodes = 1e4
-#num_episodes = 5*1e5
+# num_episodes = 10000
+num_episodes = 500000
 v_pi = MC_eVisit(get_episode_blackjack,crazyPolicy,initial_v,1,0,num_episodes)
 
 x, y = np.meshgrid(range(1,11),range(12,22))
