@@ -26,7 +26,7 @@ initial_v[-1]=1
 
 gamma = 1
 theta = 1e-6
-ph = 0.4 
+ph = 0.5
 
 P, R = get_P_and_R_gambler(ph) 
 
