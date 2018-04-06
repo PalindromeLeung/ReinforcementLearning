@@ -16,12 +16,28 @@ def MCES(get_episode,initial_Q,initial_policy,gamma,alpha,num_episodes=1e4):
     iteration = 0
     
     while iteration < num_episodes:
-
-        """
-        Your code
-        """
-        
         iteration += 1                                        
+
+        initialState = np.random.randint(num_states)
+        initialAction = np.random.randint(num_actions)
+
+        for ep in range(num_episodes):
+            states,actions,rewards = get_episode(policy, initialState, initialAction) # generate an episode
+            G_total = 0
+            for s,state in enumerate(states):
+                first_occr = next(i for i,x in enumerate(states) if states[i] == state )
+                G = sum([ x * (gamma ** i) for i,x in enumerate(rewards[first_occr:])])
+                G_total += G
+                N_sa[state,actions[s]] += 1.0
+
+                if alpha ==0:
+                    Q[state,actions[s]]  += ( G_total - Q[state,actions[s]] )/N_sa[state,actions[s]] 
+
+                else:
+                    Q[state,actions[s]]  += alpha *(G_total - Q[state,actions[s]] )
         
+            for state in states:
+                bestAction = np.argmax(Q[state,:])
+                policy[state] = Q[state,bestAction]
     return Q , policy
 
