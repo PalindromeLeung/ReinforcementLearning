@@ -9,7 +9,38 @@ terminal_state = [7,3]
 wind = [0, 0, 0, 1, 1, 1, 2, 2, 1, 0]
 
 def transition(state,action):
-    """
-    Your code
-    """    
-    return next_state, reward, terminal
+    state_x, state_y = stateSpace[state]
+    
+    if action == 0: # left
+        next_state = [max(state_x-1,0), min(state_y + wind[state_x], 6)]
+   
+    elif action == 1: # up
+        next_state = [state_x, min(state_y + 1 + wind[state_x], 6)]
+
+    elif action == 2: # right
+        next_state = [min(state_x+1,9), min(state_y + wind[state_x], 6)]
+
+    elif action	== 3: # down
+        next_state = [state_x, max(min(state_y - 1 + wind[state_x], 6), 0)]
+
+    elif action == 4: #'up/left'
+		next_state = [max(state_x-1,0), min(state_y + 1 + wind[state_x], 6)]
+
+	elif action == 5:  #'up/right'
+		next_state = [min(state_x+1,9),min(state_y + 1 + wind[state_x], 6)]
+
+	elif action == 6: #'down/right'
+		next_state = [min(state_x+1,9),max(min(state_y - 1 + wind[state_x], 6), 0)]
+
+	elif action == 7: #'down/left'
+		next_state = [max(state_x-1,0),max(min(state_y - 1 + wind[state_x], 6), 0)]
+
+	else: # 'stand'
+		next_state = [state_x, min(state_y + wind[state_x], 6)]
+
+    terminal = next_state == terminal_state
+
+    next_state = stateSpace.index(next_state)
+    reward = -1
+    
+    return next_state, reward, terminal    return next_state, reward, terminal
