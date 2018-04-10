@@ -1,4 +1,5 @@
 import numpy as np
+import random as random
 
 def sarsa(initial_Q,initial_state,transition,
           num_episodes,gamma, alpha, epsilon=0.1):
@@ -24,11 +25,44 @@ def sarsa(initial_Q,initial_state,transition,
     rewards = np.zeros(num_episodes) # store total rewards for each episode
     
     for ep in range(num_episodes):
+
+        ## epsilon greedy
+        uniformScl = epsilon/num_actions
+        greedySlc = (1-epsilon) + epsilon/num_actions
+        
+        crnState = initial_state
+             
+        ## greedy selection
+        actionPrb = uniformScl*np.ones(num_actions, dtype=float)
+        actionPrb[np.argmax(Q[crnState])] = greedySlc
+        crnAction = np.random.choice(num_actions, p = actionPrb)
+
+        cnt = 0        
+        imdRewards = 0
+        while True: 
+           cnt += 1 
+           
+           nxtState, imdReward, terminal = transition(crnState,crnAction) 
+           imdRewards += imdReward           
+           
+           if terminal:
+               break
+           
+           nxtActPrb = uniformScl*np.ones(num_actions, dtype=float)
+           nxtActPrb[np.argmax(Q[nxtState])]=greedySlc
+           nxtAction = np.random.choice(num_actions, p = nxtActPrb)
+           
+                  
+           Q[crnState,crnAction] += alpha * (imdReward + gamma*Q[nxtState, nxtAction]-Q[crnState,crnAction])
+           
+           crnState = nxtState
+           crnAction = nxtAction
+           
+           
+        rewards[ep] += imdRewards
+        steps[ep] += cnt  
        
-       """
-        Your code
-        """
-            
+          
     return Q,  steps, rewards
         
     
